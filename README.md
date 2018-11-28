@@ -1,10 +1,10 @@
 
--power_gadget2
----------------------
+# power_gadget2
+
 
 Power_gadget2 is an attept to clean up and bugfix Intel's somewhat neglected power gadget code for Linux.
 
---What's done now:
+### What's done now:
 
 The code will build clean with no additional warning flags in gcc, and minimal errors with `-Wall`
 
@@ -12,8 +12,8 @@ Check the issue tracker for continued updates.
 
 
 
-Intel(r) Power Gadget
-=======================
+# Intel(r) Power Gadget
+
 
 Intel(r) Power Gadget is a software utility and library, which allows developers 
 to monitor power at very fine time granularities (few tens of milliseconds). 
@@ -28,8 +28,7 @@ Intel(r) processors which is called RAPL (Runtime Average Power Limiting).
 RAPL is available on Intel(r) codename Sandy Bridge and later processors. 
 
 
-How to use it
------------------------------------
+## How to use it
 
 Prerequisites: 
 This tool uses the msr and cpuid kernel modules. You may have to do: 
@@ -49,8 +48,8 @@ To run:
 
 
 
-Known Limitations / Issues / BKMs
------------------------------------
+## Known Limitations / Issues / BKMs
+
 
 - The DRAM RAPL is not enabled in BIOS by default.
 To enable in BIOS, go to Memory Configuration and change the mode from
