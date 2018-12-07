@@ -130,6 +130,13 @@ bind_cpu(uint64_t cpu, cpu_set_t *old_context) {
     return err;
 }
 
+uint64_t make_mask(uint64_t width){
+
+     return pow(2, width) -1;
+
+ }
+
+
 // Parse the x2APIC_ID_t into SMT, core and package ID.
 // http://software.intel.com/en-us/articles/intel-64-architecture-processor-topology-enumeration
 void
@@ -137,16 +144,20 @@ parse_apic_id(cpuid_info_t info_l0, cpuid_info_t info_l1, APIC_ID_t *my_id){
 
     // Get the SMT ID
     uint64_t smt_mask_width = info_l0.eax & 0x1f;
-    uint64_t smt_mask = ~((-1) << smt_mask_width);
+    //uint64_t smt_mask = ~((-1) << smt_mask_width);
+    uint64_t smt_mask = make_mask(smt_mask_width);
     my_id->smt_id = info_l0.edx & smt_mask;
 
     // Get the core ID
     uint64_t core_mask_width = info_l1.eax & 0x1f;
-    uint64_t core_mask = (~((-1) << core_mask_width ) ) ^ smt_mask;
+    uint64_t core_mask = make_mask(core_mask_width) ^ smt_mask;
     my_id->core_id = (info_l1.edx & core_mask) >> smt_mask_width;
 
     // Get the package ID
-    uint64_t pkg_mask = (-1) << core_mask_width;
+    // This is their code. In theory this & shouldn't even be needed and I'm not sure why it's there
+    //TODO: for now I'm just getting rid of the -1
+    //uint64_t pkg_mask = (-1) << core_mask_width;
+    uint64_t pkg_mask = 0xffffffff << core_mask_width;
     my_id->pkg_id = (info_l1.edx & pkg_mask) >> core_mask_width;
 }
 
