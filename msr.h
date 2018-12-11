@@ -32,7 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdint.h>
 
-#define MY_ERROR -1
+#define MY_ERROR (-1)
 
 /* Replacement for pow() where the base is 2 and the power is unsigned and
  * less than 31 (will get invalid numbers if 31 or greater) */

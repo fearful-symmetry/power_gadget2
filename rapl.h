@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <stdint.h>
 
-#define MY_ERROR -1
+#define MY_ERROR (-1)
 
 /* Power Domains */
 #define RAPL_PKG 0       /*!< \brief Package power domain */

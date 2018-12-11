@@ -119,27 +119,31 @@ void do_print_energy_info() {
     fprintf(stdout, "System Time,RDTSC,Elapsed Time (sec),");
     for (uint64_t i = node; i < num_node; i++) {
         fprintf(stdout, "IA Frequency_%lu (MHz),", i);
-        if (is_supported_domain(RAPL_PKG))
+        if (is_supported_domain(RAPL_PKG)) {
             fprintf(
                 stdout,
                 "Processor Power_%lu (Watt),Cumulative Processor Energy_%lu "
                 "(Joules),Cumulative Processor Energy_%lu (mWh),",
                 i, i, i);
-        if (is_supported_domain(RAPL_PP0))
+}
+        if (is_supported_domain(RAPL_PP0)) {
             fprintf(stdout,
                     "IA Power_%lu (Watt),Cumulative IA Energy_%lu "
                     "(Joules),Cumulative IA Energy_%lu(mWh),",
                     i, i, i);
-        if (is_supported_domain(RAPL_PP1))
+}
+        if (is_supported_domain(RAPL_PP1)) {
             fprintf(stdout,
                     "GT Power_%lu (Watt),Cumulative GT Energy_%lu "
                     "(Joules),Cumulative GT Energy_%lu(mWh)",
                     i, i, i);
-        if (is_supported_domain(RAPL_DRAM))
+}
+        if (is_supported_domain(RAPL_DRAM)) {
             fprintf(stdout,
                     "DRAM Power_%lu (Watt),Cumulative DRAM Energy_%lu "
                     "(Joules),Cumulative DRAM Energy_%lu(mWh),",
                     i, i, i);
+}
     }
     fprintf(stdout, "\n");
 
@@ -208,8 +212,9 @@ void do_print_energy_info() {
         fprintf(stdout, "\n");
 
         // check to see if we are done
-        if (total_elapsed_time >= duration)
+        if (total_elapsed_time >= duration) {
             break;
+}
     }
 
     end = clock();

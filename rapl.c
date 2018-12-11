@@ -116,13 +116,15 @@ int bind_context(cpu_set_t *new_context, cpu_set_t *old_context) {
     int ret = 0;
     if (old_context != NULL) {
         err = sched_getaffinity(0, sizeof(cpu_set_t), old_context);
-        if (0 != err)
+        if (0 != err) {
             ret = MY_ERROR;
+}
     }
 
     err += sched_setaffinity(0, sizeof(cpu_set_t), new_context);
-    if (0 != err)
+    if (0 != err) {
         ret = MY_ERROR;
+}
 
     return ret;
 }
@@ -191,8 +193,9 @@ int build_topology() {
         num_core_threads = info_l0.ebx & 0xffff;
         num_pkg_threads = info_l1.ebx & 0xffff;
 
-        if (os_map[i].pkg_id > max_pkg)
+        if (os_map[i].pkg_id > max_pkg) {
             max_pkg = os_map[i].pkg_id;
+}
 
         err = bind_context(&prev_context, NULL);
 
@@ -206,8 +209,9 @@ int build_topology() {
 
     // Construct a pkg map: pkg_map[pkg id][APIC_ID ... APIC_ID]
     pkg_map = (APIC_ID_t **)malloc(num_nodes * sizeof(APIC_ID_t *));
-    for (i = 0; i < num_nodes; i++)
+    for (i = 0; i < num_nodes; i++) {
         pkg_map[i] = (APIC_ID_t *)malloc(num_pkg_threads * sizeof(APIC_ID_t));
+}
 
     uint64_t p, t;
     for (i = 0; i < os_cpu_count; i++) {
@@ -354,17 +358,20 @@ int init_rapl() {
 int terminate_rapl() {
     uint64_t i;
 
-    if (NULL != os_map)
+    if (NULL != os_map) {
         free(os_map);
+}
 
     if (NULL != pkg_map) {
-        for (i = 0; i < num_nodes; i++)
+        for (i = 0; i < num_nodes; i++) {
             free(pkg_map[i]);
+}
         free(pkg_map);
     }
 
-    if (NULL != msr_support_table)
+    if (NULL != msr_support_table) {
         free(msr_support_table);
+}
 
     return 0;
 }
@@ -1249,8 +1256,9 @@ int get_os_freq(uint64_t cpu, uint64_t *freq) {
     out = sprintf(path, "%s%lu%s", "/sys/devices/system/cpu/cpu", cpu,
                   "/cpufreq/cpuinfo_cur_freq");
 
-    if (out > 0)
+    if (out > 0) {
         fp = fopen(path, "r");
+}
 
     if (NULL != fp) {
         fscanf(fp, "%lu", freq);
@@ -1277,14 +1285,16 @@ int get_pp0_freq_mhz(uint64_t node, uint64_t *freq) {
             sum_freq += cpu_freq;
         }
 
-        if (0 == ret)
+        if (0 == ret) {
             *freq = (sum_freq / num_pkg_threads) / 1000.0;
+}
     } else {
         uint64_t cpu_freq = 0;
         uint64_t os_cpu = pp0_node_to_cpu(node);
         ret = get_os_freq(os_cpu, &cpu_freq);
-        if (0 == ret)
+        if (0 == ret) {
             *freq = cpu_freq / 1000.0;
+}
     }
 
     return ret;

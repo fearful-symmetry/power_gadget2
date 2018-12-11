@@ -45,12 +45,15 @@ int read_msr(int cpu, uint64_t address, uint64_t *value) {
 
     sprintf(msr_path, "/dev/cpu/%d/msr", cpu);
     err = ((fp = fopen(msr_path, "r")) == NULL);
-    if (!err)
+    if (!err) {
         err = (fseek(fp, address, SEEK_CUR) != 0);
-    if (!err)
+}
+    if (!err) {
         err = (fread(value, sizeof(uint64_t), 1, fp) != 1);
-    if (fp != NULL)
+}
+    if (fp != NULL) {
         fclose(fp);
+}
     return err;
 }
 
@@ -67,11 +70,14 @@ int write_msr(int cpu, uint64_t address, uint64_t value) {
 
     sprintf(msr_path, "/dev/cpu/%d/msr", cpu);
     err = ((fp = fopen(msr_path, "w")) == NULL);
-    if (!err)
+    if (!err) {
         err = (fseek(fp, address, SEEK_CUR) != 0);
-    if (!err)
+}
+    if (!err) {
         err = (fwrite(&value, sizeof(uint64_t), 1, fp) != 1);
-    if (fp != NULL)
+}
+    if (fp != NULL) {
         fclose(fp);
+}
     return err;
 }
