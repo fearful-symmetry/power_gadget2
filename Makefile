@@ -1,4 +1,4 @@
-CFLAGS=-g -Wall -Wextra -Wundef -Wimplicit
+CFLAGS=-g -Wall -Wextra -Wundef -Wimplicit -Wpedantic
 
 all: rapl_lib_shared rapl_lib_static power_gadget_static
 

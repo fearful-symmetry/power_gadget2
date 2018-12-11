@@ -1338,7 +1338,6 @@ int
 get_pp0_freq_mhz(uint64_t node, uint64_t *freq)
 {
     int ret = 0;
-    int i;
 
     // If all the cores are on the same power domain, report the average freq
     if( get_num_rapl_nodes_pp0() == get_num_rapl_nodes_pkg())
@@ -1346,7 +1345,7 @@ get_pp0_freq_mhz(uint64_t node, uint64_t *freq)
         uint64_t sum_freq = 0;
         uint64_t cpu_freq = 0;
 
-        for(i=0; i<num_pkg_threads; i++)
+        for(uint64_t i=0; i<num_pkg_threads; i++)
         {
             uint64_t os_cpu = pkg_map[node][i].os_id;
             ret = get_os_freq(os_cpu, &cpu_freq);

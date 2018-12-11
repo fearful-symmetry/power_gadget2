@@ -85,7 +85,6 @@ convert_time_to_sec(struct timeval tv)
 void
 do_print_energy_info()
 {
-    int i = 0;
     int domain = 0;
     uint64_t node = 0;
     double new_sample;
@@ -111,21 +110,21 @@ do_print_energy_info()
 
     /* Print header */
     fprintf(stdout, "System Time,RDTSC,Elapsed Time (sec),");
-    for (i = node; i < num_node; i++) {
-        fprintf(stdout, "IA Frequency_%d (MHz),",i);
+    for (uint64_t i = node; i < num_node; i++) {
+        fprintf(stdout, "IA Frequency_%lu (MHz),",i);
         if(is_supported_domain(RAPL_PKG))
-            fprintf(stdout,"Processor Power_%d (Watt),Cumulative Processor Energy_%d (Joules),Cumulative Processor Energy_%d (mWh),", i,i,i);
+            fprintf(stdout,"Processor Power_%lu (Watt),Cumulative Processor Energy_%lu (Joules),Cumulative Processor Energy_%lu (mWh),", i,i,i);
         if(is_supported_domain(RAPL_PP0))
-            fprintf(stdout, "IA Power_%d (Watt),Cumulative IA Energy_%d (Joules),Cumulative IA Energy_%d(mWh),", i,i,i);
+            fprintf(stdout, "IA Power_%lu (Watt),Cumulative IA Energy_%lu (Joules),Cumulative IA Energy_%lu(mWh),", i,i,i);
         if(is_supported_domain(RAPL_PP1))
-            fprintf(stdout, "GT Power_%d (Watt),Cumulative GT Energy_%d (Joules),Cumulative GT Energy_%d(mWh)", i,i,i);
+            fprintf(stdout, "GT Power_%lu (Watt),Cumulative GT Energy_%lu (Joules),Cumulative GT Energy_%lu(mWh)", i,i,i);
         if(is_supported_domain(RAPL_DRAM))
-            fprintf(stdout, "DRAM Power_%d (Watt),Cumulative DRAM Energy_%d (Joules),Cumulative DRAM Energy_%d(mWh),", i,i,i);
+            fprintf(stdout, "DRAM Power_%lu (Watt),Cumulative DRAM Energy_%lu (Joules),Cumulative DRAM Energy_%lu(mWh),", i,i,i);
     }
     fprintf(stdout, "\n");
 
     /* Read initial values */
-    for (i = node; i < num_node; i++) {
+    for (uint64_t i = node; i < num_node; i++) {
         for (domain = 0; domain < RAPL_NR_DOMAIN; ++domain) {
             if(is_supported_domain(domain)) {
                 prev_sample[i][domain] = get_rapl_energy_info(domain, i);
@@ -146,7 +145,7 @@ do_print_energy_info()
         interval_start = convert_time_to_sec(tv);
         interval_elapsed_time = interval_start - end;
 
-        for (i = node; i < num_node; i++) {
+        for (uint64_t i = node; i < num_node; i++) {
             for (domain = 0; domain < RAPL_NR_DOMAIN; ++domain) {
                 if(is_supported_domain(domain)) {
                     new_sample = get_rapl_energy_info(domain, i);
@@ -176,7 +175,7 @@ do_print_energy_info()
 
         read_tsc(&tsc);
         fprintf(stdout,"%s,%lu,%.4lf,", time_buffer, tsc, total_elapsed_time);
-        for (i = node; i < num_node; i++) {
+        for (uint64_t i = node; i < num_node; i++) {
             get_pp0_freq_mhz(i, &freq);
             fprintf(stdout, "%lu,", freq);
             for (domain = 0; domain < RAPL_NR_DOMAIN; ++domain) {
@@ -197,26 +196,26 @@ do_print_energy_info()
 
     /* Print summary */
     fprintf(stdout, "\nTotal Elapsed Time(sec)=%.4lf\n\n", total_elapsed_time);
-    for (i = node; i < num_node; i++) {
+    for (uint64_t i = node; i < num_node; i++) {
         if(is_supported_domain(RAPL_PKG)){
-            fprintf(stdout, "Total Processor Energy_%d(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_PKG]);
-            fprintf(stdout, "Total Processor Energy_%d(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_PKG]);
-            fprintf(stdout, "Average Processor Power_%d(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_PKG]/total_elapsed_time);
+            fprintf(stdout, "Total Processor Energy_%lu(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_PKG]);
+            fprintf(stdout, "Total Processor Energy_%lu(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_PKG]);
+            fprintf(stdout, "Average Processor Power_%lu(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_PKG]/total_elapsed_time);
         }
         if(is_supported_domain(RAPL_PP0)){
-            fprintf(stdout, "Total IA Energy_%d(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_PP0]);
-            fprintf(stdout, "Total IA Energy_%d(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_PP0]);
-            fprintf(stdout, "Average IA Power_%d(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_PP0]/total_elapsed_time);
+            fprintf(stdout, "Total IA Energy_%lu(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_PP0]);
+            fprintf(stdout, "Total IA Energy_%lu(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_PP0]);
+            fprintf(stdout, "Average IA Power_%lu(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_PP0]/total_elapsed_time);
         }
         if(is_supported_domain(RAPL_PP1)){
-            fprintf(stdout, "Total GT Energy_%d(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_PP1]);
-            fprintf(stdout, "Total GT Energy_%d(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_PP1]);
-            fprintf(stdout, "Average GT Power_%d(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_PP1]/total_elapsed_time);
+            fprintf(stdout, "Total GT Energy_%lu(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_PP1]);
+            fprintf(stdout, "Total GT Energy_%lu(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_PP1]);
+            fprintf(stdout, "Average GT Power_%lu(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_PP1]/total_elapsed_time);
         }
         if(is_supported_domain(RAPL_DRAM)){
-            fprintf(stdout, "Total DRAM Energy_%d(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_DRAM]);
-            fprintf(stdout, "Total DRAM Energy_%d(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_DRAM]);
-            fprintf(stdout, "Average DRAM Power_%d(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_DRAM]/total_elapsed_time);
+            fprintf(stdout, "Total DRAM Energy_%lu(Joules)=%.4lf\n", i, cum_energy_J[i][RAPL_DRAM]);
+            fprintf(stdout, "Total DRAM Energy_%lu(mWh)=%.4lf\n", i, cum_energy_mWh[i][RAPL_DRAM]);
+            fprintf(stdout, "Average DRAM Power_%lu(Watt)=%.4lf\n\n", i, cum_energy_J[i][RAPL_DRAM]/total_elapsed_time);
         }
     }
     read_tsc(&tsc);
