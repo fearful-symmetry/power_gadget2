@@ -47,7 +47,7 @@ double duration = 3600.0;
 double delay_unit = 1000000.0;
 
 double get_rapl_energy_info(uint64_t power_domain, uint64_t node) {
-    int err;
+    int err = 0;
     double total_energy_consumed;
 
     switch (power_domain) {
@@ -66,6 +66,10 @@ double get_rapl_energy_info(uint64_t power_domain, uint64_t node) {
     default:
         err = MY_ERROR;
         break;
+    }
+
+    if (err == -1) {
+        return err;
     }
 
     return total_energy_consumed;
@@ -151,7 +155,12 @@ void do_print_energy_info() {
     for (uint64_t i = node; i < num_node; i++) {
         for (domain = 0; domain < RAPL_NR_DOMAIN; ++domain) {
             if (is_supported_domain(domain)) {
-                prev_sample[i][domain] = get_rapl_energy_info(domain, i);
+                double dom_sample = get_rapl_energy_info(domain, i);
+                if (dom_sample == MY_ERROR){
+                    fprintf(stderr, "get_rapl_energy_info returned err %e", dom_sample);
+                    return;
+                }
+                prev_sample[i][domain] = dom_sample;
             }
         }
     }
@@ -172,6 +181,10 @@ void do_print_energy_info() {
             for (domain = 0; domain < RAPL_NR_DOMAIN; ++domain) {
                 if (is_supported_domain(domain)) {
                     new_sample = get_rapl_energy_info(domain, i);
+                    if (new_sample == MY_ERROR){
+                        fprintf(stderr, "get_rapl_energy_info returned err %e", new_sample);
+                        return;
+                    }
                     delta = new_sample - prev_sample[i][domain];
 
                     /* Handle wraparound */
