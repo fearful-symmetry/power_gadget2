@@ -129,25 +129,25 @@ void do_print_energy_info() {
                 "Processor Power_%lu (Watt),Cumulative Processor Energy_%lu "
                 "(Joules),Cumulative Processor Energy_%lu (mWh),",
                 i, i, i);
-}
+        }
         if (is_supported_domain(RAPL_PP0)) {
             fprintf(stdout,
                     "IA Power_%lu (Watt),Cumulative IA Energy_%lu "
                     "(Joules),Cumulative IA Energy_%lu(mWh),",
                     i, i, i);
-}
+        }
         if (is_supported_domain(RAPL_PP1)) {
             fprintf(stdout,
                     "GT Power_%lu (Watt),Cumulative GT Energy_%lu "
                     "(Joules),Cumulative GT Energy_%lu(mWh)",
                     i, i, i);
-}
+        }
         if (is_supported_domain(RAPL_DRAM)) {
             fprintf(stdout,
                     "DRAM Power_%lu (Watt),Cumulative DRAM Energy_%lu "
                     "(Joules),Cumulative DRAM Energy_%lu(mWh),",
                     i, i, i);
-}
+        }
     }
     fprintf(stdout, "\n");
 
@@ -156,8 +156,9 @@ void do_print_energy_info() {
         for (domain = 0; domain < RAPL_NR_DOMAIN; ++domain) {
             if (is_supported_domain(domain)) {
                 double dom_sample = get_rapl_energy_info(domain, i);
-                if (dom_sample == MY_ERROR){
-                    fprintf(stderr, "get_rapl_energy_info returned err %e", dom_sample);
+                if (dom_sample == MY_ERROR) {
+                    fprintf(stderr, "get_rapl_energy_info returned err %e",
+                            dom_sample);
                     return;
                 }
                 prev_sample[i][domain] = dom_sample;
@@ -181,8 +182,9 @@ void do_print_energy_info() {
             for (domain = 0; domain < RAPL_NR_DOMAIN; ++domain) {
                 if (is_supported_domain(domain)) {
                     new_sample = get_rapl_energy_info(domain, i);
-                    if (new_sample == MY_ERROR){
-                        fprintf(stderr, "get_rapl_energy_info returned err %e", new_sample);
+                    if (new_sample == MY_ERROR) {
+                        fprintf(stderr, "get_rapl_energy_info returned err %e",
+                                new_sample);
                         return;
                     }
                     delta = new_sample - prev_sample[i][domain];
@@ -227,7 +229,7 @@ void do_print_energy_info() {
         // check to see if we are done
         if (total_elapsed_time >= duration) {
             break;
-}
+        }
     }
 
     end = clock();
@@ -319,7 +321,10 @@ int cmdline(int argc, char **argv) {
 }
 
 void sigint_handler(int signum) {
-    terminate_rapl();
+    // only clean up on sigint
+    if (signum == 2) {
+        terminate_rapl();
+    }
     exit(0);
 }
 
