@@ -29,7 +29,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "cpuid.h"
 
 void cpuid(uint32_t eax_in, uint32_t ecx_in, cpuid_info_t *ci) {
-    asm(
+    __asm__(
 #if defined(__LP64__)         /* 64-bit architecture */
         "cpuid;"              /* execute the cpuid instruction */
         "movl %%ebx, %[ebx];" /* save ebx output */

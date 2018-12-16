@@ -1,20 +1,21 @@
 CFLAGS=-g -Wall -Wextra -Wundef -Wimplicit -Wpedantic
+CC=clang
 
 all: rapl_lib_shared rapl_lib_static power_gadget_static
 
 rapl_lib_shared: 
-	gcc $(CFLAGS) -fpic -c msr.c cpuid.c rapl.c 
-	gcc $(CFLAGS) -shared -o librapl.so msr.o cpuid.o rapl.o
+	$(CC) $(CFLAGS) -fpic -c msr.c cpuid.c rapl.c 
+	$(CC) $(CFLAGS) -shared -o librapl.so msr.o cpuid.o rapl.o
 
 rapl_lib_static: 
-	gcc $(CFLAGS) -c msr.c cpuid.c rapl.c 
+	$(CC) $(CFLAGS) -c msr.c cpuid.c rapl.c 
 	ar rcs librapl.a msr.o cpuid.o rapl.o
 
 power_gadget_static: 
-	gcc $(CFLAGS) power_gadget.c -I. -o power_gadget ./librapl.a -L. -lm 
+	$(CC) $(CFLAGS) power_gadget.c -I. -o power_gadget ./librapl.a -L. -lm 
 
 power_gadget: 
-	gcc $(CFLAGS) power_gadget.c -I. -o power_gadget -L. -lm -lrapl 
+	 $(CFLAGS) power_gadget.c -I. -o power_gadget -L. -lm -lrapl 
 
 gprof: CFLAGS = -pg
 gprof: all

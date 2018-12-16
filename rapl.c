@@ -1232,7 +1232,7 @@ int read_tsc(uint64_t *tsc) {
     uint32_t d;
     uint32_t a;
 
-    asm("rdtsc;"
+    __asm__("rdtsc;"
         "mov %%edx, %0;"   // move edx into d
         "mov %%eax, %1;"   // move eax into a
         : "=r"(d), "=r"(a) // output
@@ -1251,7 +1251,7 @@ int get_os_freq(uint64_t cpu, uint64_t *freq) {
     char path[60];
     int ret = 0;
     int out = 0;
-    FILE *fp;
+    FILE *fp = NULL;
 
     out = sprintf(path, "%s%lu%s", "/sys/devices/system/cpu/cpu", cpu,
                   "/cpufreq/cpuinfo_cur_freq");

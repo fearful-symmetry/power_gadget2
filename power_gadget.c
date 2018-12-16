@@ -48,7 +48,7 @@ double delay_unit = 1000000.0;
 
 double get_rapl_energy_info(uint64_t power_domain, uint64_t node) {
     int err = 0;
-    double total_energy_consumed;
+    double total_energy_consumed = 0;
 
     switch (power_domain) {
     case PKG:
@@ -68,7 +68,7 @@ double get_rapl_energy_info(uint64_t power_domain, uint64_t node) {
         break;
     }
 
-    if (err == -1) {
+    if (err != 0) {
         return err;
     }
 
@@ -98,14 +98,23 @@ double convert_time_to_sec(struct timeval tv) {
 void do_print_energy_info() {
     int domain = 0;
     uint64_t node = 0;
-    double new_sample;
-    double delta;
+    double new_sample = 0 ;
+    double delta = 0;
     //    double power;
 
+    //This is...not a very nice way of initializing memory here
+    //But we can say that these arrays are going to be pretty small.
     double prev_sample[num_node][RAPL_NR_DOMAIN];
+    memset(prev_sample, 0, num_node*RAPL_NR_DOMAIN*sizeof(double));
+
     double power_watt[num_node][RAPL_NR_DOMAIN];
+    memset(power_watt, 0, num_node*RAPL_NR_DOMAIN*sizeof(double));
+
     double cum_energy_J[num_node][RAPL_NR_DOMAIN];
+    memset(cum_energy_J, 0, num_node*RAPL_NR_DOMAIN*sizeof(double));
+
     double cum_energy_mWh[num_node][RAPL_NR_DOMAIN];
+    memset(cum_energy_mWh, 0, num_node*RAPL_NR_DOMAIN*sizeof(double));
 
     char time_buffer[32];
     struct timeval tv;
@@ -188,14 +197,13 @@ void do_print_energy_info() {
                         return;
                     }
                     delta = new_sample - prev_sample[i][domain];
-
+                    //printf("new_sample: %e\n", new_sample);
                     /* Handle wraparound */
                     if (delta < 0) {
                         delta += MAX_ENERGY_STATUS_JOULES;
                     }
 
                     prev_sample[i][domain] = new_sample;
-
                     // Use the computed elapsed time between samples (and not
                     // just the sleep delay, in order to more accourately
                     // account for the delay between samples
