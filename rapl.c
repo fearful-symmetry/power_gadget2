@@ -171,7 +171,7 @@ void parse_apic_id(cpuid_info_t info_l0, cpuid_info_t info_l1,
 // For documentation, see:
 // http://software.intel.com/en-us/articles/intel-64-architecture-processor-topology-enumeration
 int build_topology() {
-    int err;
+    int err = 0;
     uint64_t i; //,j;
     uint64_t max_pkg = 0;
     os_cpu_count = sysconf(_SC_NPROCESSORS_CONF);
@@ -183,6 +183,10 @@ int build_topology() {
 
     for (i = 0; i < os_cpu_count; i++) {
         err = bind_cpu(i, &prev_context);
+        if (err != 0){
+            return err;
+        }
+
 
         cpuid_info_t info_l0 = get_processor_topology(0);
         cpuid_info_t info_l1 = get_processor_topology(1);
@@ -195,10 +199,12 @@ int build_topology() {
 
         if (os_map[i].pkg_id > max_pkg) {
             max_pkg = os_map[i].pkg_id;
-}
+        }
 
         err = bind_context(&prev_context, NULL);
-
+        if (err != 0){
+            return err;
+        }
         // printf("smt_id: %u core_id: %u pkg_id: %u os_id: %u\n",
         //   os_map[i].smt_id, os_map[i].core_id, os_map[i].pkg_id,
         //   os_map[i].os_id);
